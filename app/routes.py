@@ -7,3 +7,7 @@ def hello():
 @app.route('/')
 def index():
     return 'Index'
+
+@app.route('/login')
+def login():
+    return 'Log in'
