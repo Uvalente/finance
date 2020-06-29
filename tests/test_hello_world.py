@@ -1,6 +1,4 @@
-from app import app
+def test(client):
+    response = client.get('/hello')
 
-def test():
-  response = app.test_client().get('/hello')
-
-  assert response.data == b"Hello world"
+    assert response.data == b"Hello world"
