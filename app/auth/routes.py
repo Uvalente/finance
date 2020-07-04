@@ -1,28 +1,16 @@
-from flask_login import current_user, login_user, logout_user, login_required
-from flask import current_app as app
+from flask_login import current_user, login_user, logout_user
 from flask import redirect, render_template, flash, url_for, request
 from werkzeug.urls import url_parse
-from app.forms import LoginForm, RegistrationForm
 from app.models import User
+from app.auth import auth_bp
 from app import db
+from .forms import LoginForm, RegistrationForm
 
 
-@app.route("/hello")
-def hello():
-    return "Hello world"
-
-
-@app.route('/')
-@app.route('/index')
-@login_required
-def index():
-    return render_template('index.html')
-
-
-@app.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main_bp.index'))
 
     form = LoginForm()
 
@@ -31,24 +19,23 @@ def login():
 
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
-            return redirect(url_for('login'))
+            return redirect(url_for('auth_bp.login'))
 
         login_user(user, remember=form.remember_me.data)
         flash('Logged in')
 
         next_page = request.args.get('next')
-        print(next_page, '############################')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
+            next_page = url_for('main_bp.index')
         return redirect(next_page)
 
     return render_template('login.html', form=form)
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main_bp.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.username.data)
@@ -56,13 +43,14 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Registered')
-        return redirect(url_for('login'))
+        login_user(user)
+        return redirect(url_for('main_bp.index'))
 
     return render_template('register.html', form=form)
 
 
-@app.route('/logout')
+@auth_bp.route('/logout')
 def logout():
     logout_user()
     flash('Logged out')
-    return redirect(url_for('login'))
+    return redirect(url_for('auth_bp.login'))

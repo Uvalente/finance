@@ -10,11 +10,12 @@
 <body>
   <nav>
     Finance
-    <a href="{{ url_for('index') }}">Hello</a>
     {% if current_user.is_anonymous %}
-    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('auth_bp.login') }}">Login</a>
+    <a href="{{ url_for('auth_bp.register') }}">Register</a>
     {% else %}
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <a href="{{ url_for('main_bp.index') }}">Dashboard</a>
+    <a href="{{ url_for('auth_bp.logout') }}">Logout</a>
     {% endif %}
   </nav>
   {% with messages = get_flashed_messages() %}

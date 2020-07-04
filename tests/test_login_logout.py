@@ -1,6 +1,6 @@
 def test_wrong_credential(test_client, init_database):
     response = test_client.post(
-        '/login',
+        'login',
         data=dict(username='user', password='pass'),
         follow_redirects=True)
 

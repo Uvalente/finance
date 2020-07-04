@@ -8,7 +8,7 @@ from config import Config
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
-login.login_view = 'login'
+login.login_view = 'auth_bp.login'
 login.login_message = 'Please log in to access this page'
 
 def create_app(config_class=Config):
@@ -20,6 +20,11 @@ def create_app(config_class=Config):
     login.init_app(app)
 
     with app.app_context():
-        from . import routes
+        from .auth import auth_bp
+        from .main import main_bp
         from . import models
+
+        app.register_blueprint(auth_bp)
+        app.register_blueprint(main_bp)
+
         return app
