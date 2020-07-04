@@ -1,6 +1,7 @@
 from flask_login import current_user, login_user, logout_user, login_required
 from flask import current_app as app
-from flask import redirect, render_template, flash, url_for
+from flask import redirect, render_template, flash, url_for, request
+from werkzeug.urls import url_parse
 from app.forms import LoginForm
 from app.models import User
 
@@ -33,7 +34,9 @@ def login():
 
         login_user(user, remember=form.remember_me.data)
         flash('Logged in')
-        return redirect(url_for('login'))
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
 
     return render_template('login.html', form=form)
 
