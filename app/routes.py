@@ -1,4 +1,4 @@
-from flask_login import current_user, login_user, logout_user
+from flask_login import current_user, login_user, logout_user, login_required
 from flask import current_app as app
 from flask import redirect, render_template, flash, url_for
 from app.forms import LoginForm
@@ -11,6 +11,8 @@ def hello():
 
 
 @app.route('/')
+@app.route('/index')
+@login_required
 def index():
     return render_template('index.html')
 

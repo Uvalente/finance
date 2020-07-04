@@ -12,3 +12,8 @@ def test_correct_credential(test_client, init_database):
     )
 
     assert b'Logged in' in response.data
+
+def test_logout(test_client, init_database):
+    response = test_client.get('/logout', follow_redirects=True)
+
+    assert b'Logged out' in response.data
