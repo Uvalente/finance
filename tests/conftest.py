@@ -1,39 +1,30 @@
-import os
-import tempfile
 import pytest
-
-from wsgi import app
-from config import Config
 from app import create_app, db
+from app.models import User
+from config import TestConfig
 
+@pytest.fixture(scope="session")
+def test_client():
+    test_app = create_app(TestConfig)
+    testing_client = test_app.test_client()
 
-@pytest.fixture(scope="module")
-def test_db():
-    class TestConfig(Config):
-        TESTING = True
-        SQLALCHEMY_DATABASE_URI = 'sqlite://'
-
-    _app = create_app(TestConfig)
-    context = _app.app_context()
+    context = test_app.app_context()
     context.push()
+
+    yield testing_client
+
+    context.pop()
+
+@pytest.fixture(scope="session")
+def init_database():
     db.create_all()
+
+    user = User(username='seed_user', email='seed@example.com')
+    user.set_password('seed_password')
+
+    db.session.add(user)
+    db.session.commit()
 
     yield db
 
-    db.session.remove()
     db.drop_all()
-    context.pop()
-
-
-@pytest.fixture(scope="module")
-def client():
-    db_fd, app.config['SQLALCHEMY_DATABASE_URI'] = tempfile.mkstemp()
-    app.config['TESTING'] = True
-
-    with app.test_client() as client:
-        # with app.app_context():
-        #     init_db()
-        yield client
-
-    os.close(db_fd)
-    os.unlink(app.config['SQLALCHEMY_DATABASE_URI'])
