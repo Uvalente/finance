@@ -1,5 +1,5 @@
 from werkzeug.exceptions import NotFound, InternalServerError
-from flask import render_template
+from flask import render_template, abort
 from app.errors import errors_bp
 from app import db
 
@@ -13,3 +13,8 @@ def page_not_found(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('errors/500.html'), 500
+
+
+@errors_bp.route('/test500')
+def throw_500():
+    abort(500)
