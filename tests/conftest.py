@@ -3,6 +3,7 @@ from app import create_app, db
 from app.models import User
 from config import TestConfig
 
+
 @pytest.fixture(scope="session")
 def test_client():
     test_app = create_app(TestConfig)
