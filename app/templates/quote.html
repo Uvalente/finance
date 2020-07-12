@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<form action='' method='POST'>
+    {{ quote_form.hidden_tag() }}
+    <div>
+        {{ quote_form.symbol.label }}{{ quote_form.symbol }}
+    </div>
+    <div>
+        {{ quote_form.submit }}
+    </div>
+    {% if share %}
+        <div>
+            A share of {{ share.name }} cost £ {{ share.price }}
+            symbol: {{ share.symbol }}
+        </div>
+    {% else %}
+    {% endif %}
+</form>
+{% endblock content %}
