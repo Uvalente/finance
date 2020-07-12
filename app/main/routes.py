@@ -1,8 +1,10 @@
-from flask import render_template, current_app, flash ,redirect, url_for
+from flask import render_template, current_app, flash, redirect, url_for
 from flask_login import login_required, current_user
 import requests
+from app import db
 from app.main import main_bp
-from .forms import QuoteForm
+from app.models import Stock
+from .forms import QuoteForm, BuyForm
 
 
 @main_bp.route("/hello")
@@ -29,6 +31,23 @@ def quote():
         return render_template('quote.html', quote_form=quote_form, share=share)
 
     return render_template('quote.html', quote_form=quote_form)
+
+
+@main_bp.route('/buy', methods=['POST'])
+@login_required
+def buy():
+    form = BuyForm()
+    if form.validate_on_submit():
+        stock = Stock(
+            symbol=form.symbol.data,
+            shares=form.shares.data,
+            buy_price=form.buy_price.data,
+            owner=current_user
+        )
+        db.session.add(stock)
+        db.session.commit()
+        flash(f'You bought {stock.shares} {stock.symbol} shares')
+        return redirect(url_for('main_bp.index'))
 
 
 def get_quote(symbol):

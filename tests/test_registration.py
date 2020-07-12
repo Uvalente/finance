@@ -1,6 +1,6 @@
 def test_error_creation(test_client, init_database):
     response = test_client.post(
-        'register',
+        '/register',
         data=dict(username='seed_user', email='test@example.com',
                   password='test_password', confirmPassword='test_password'),
         follow_redirects=True
@@ -8,7 +8,7 @@ def test_error_creation(test_client, init_database):
     assert b'Username already in use' in response.data
 
     response = test_client.post(
-        'register',
+        '/register',
         data=dict(username='seed_user_2', email='seed@example.com',
                   password='test_password', confirmPassword='test_password'),
         follow_redirects=True
