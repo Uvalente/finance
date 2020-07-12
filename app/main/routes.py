@@ -22,6 +22,7 @@ def index():
         item = get_quote(stock.symbol)
         item['shares'] = stock.shares
         val = item['shares'] * float(item['price'])
+        item['price'] = f"{float(item['price']):0.2f}"
         item['total'] = f"{val:0.2f}"
         stocks.append(item)
         total += val
