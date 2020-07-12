@@ -31,8 +31,8 @@ class Stock(db.Model):
     __tablename__ = 'stocks'
     id = db.Column(db.Integer, primary_key=True)
     symbol = db.Column(db.String(20), index=True, nullable=False)
-    shares = db.Column(db.Integer)
-    buy_price = db.Column(db.Float)
+    shares = db.Column(db.Integer, nullable=False)
+    buy_price = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     def __repr__(self):

@@ -9,11 +9,21 @@
     <div>
         {{ quote_form.submit }}
     </div>
-    {% if share %}
-        <div>
-            A share of {{ share.name }} cost £ {{ share.price }}
-            symbol: {{ share.symbol }}
-        </div>
-    {% endif %}
 </form>
+{% if share %}
+<div>
+    A share of {{ share.name }} cost £ {{ share.price }}
+    symbol: {{ share.symbol }}
+</div>
+<form action="/buy" method="POST">
+    {{ buy_form.hidden_tag() }}
+    {{ buy_form.symbol(value=share.symbol, hidden=True) }}
+    <div>
+        {{ buy_form.shares.label }}{{ buy_form.shares }}
+    </div>
+    <div>
+        {{ buy_form.submit }}
+    </div>
+</form>
+{% endif %}
 {% endblock content %}

@@ -23,12 +23,13 @@ def index():
 @login_required
 def quote():
     quote_form = QuoteForm()
+    buy_form = BuyForm()
     if quote_form.validate_on_submit():
         share = get_quote(quote_form.symbol.data)
         if not share:
             flash('No stock found')
             return redirect(url_for('main_bp.quote'))
-        return render_template('quote.html', quote_form=quote_form, share=share)
+        return render_template('quote.html', quote_form=quote_form, share=share, buy_form=buy_form)
 
     return render_template('quote.html', quote_form=quote_form)
 
@@ -38,16 +39,19 @@ def quote():
 def buy():
     form = BuyForm()
     if form.validate_on_submit():
+        share = get_quote(form.symbol.data)
         stock = Stock(
             symbol=form.symbol.data,
             shares=form.shares.data,
-            buy_price=form.buy_price.data,
+            buy_price=share['price'],
             owner=current_user
         )
         db.session.add(stock)
         db.session.commit()
-        flash(f'You bought {stock.shares} {stock.symbol} shares')
+        flash(f'You bought {stock.shares} {stock.symbol} shares at £ {stock.buy_price:0.2f} each')
         return redirect(url_for('main_bp.index'))
+    flash('Something went wrong, please try again')
+    return redirect(url_for('main_bp.quote'))
 
 
 def get_quote(symbol):

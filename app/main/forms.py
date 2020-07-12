@@ -11,5 +11,4 @@ class QuoteForm(FlaskForm):
 class BuyForm(FlaskForm):
     symbol = StringField('Symbol', [DataRequired()])
     shares = IntegerField('Shares', [DataRequired(), NumberRange(min=1)])
-    buy_price = FloatField('Buy Price', [DataRequired(), NumberRange(min=0.0)])
     submit = SubmitField('Buy')
