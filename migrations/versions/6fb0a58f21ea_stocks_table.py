@@ -21,8 +21,8 @@ def upgrade():
     op.create_table('stocks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('symbol', sa.String(length=20), nullable=False),
-    sa.Column('shares', sa.Integer(), nullable=True),
-    sa.Column('buy_price', sa.Float(), nullable=True),
+    sa.Column('shares', sa.Integer(), nullable=False),
+    sa.Column('buy_price', sa.Float(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
