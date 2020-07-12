@@ -1,4 +1,4 @@
-from flask import render_template, current_app
+from flask import render_template, current_app, flash ,redirect, url_for
 from flask_login import login_required, current_user
 import requests
 from app.main import main_bp
@@ -23,7 +23,9 @@ def quote():
     quote_form = QuoteForm()
     if quote_form.validate_on_submit():
         share = get_quote(quote_form.symbol.data)
-        print(share)
+        if not share:
+            flash('No stock found')
+            return redirect(url_for('main_bp.quote'))
         return render_template('quote.html', quote_form=quote_form, share=share)
 
     return render_template('quote.html', quote_form=quote_form)
