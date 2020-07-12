@@ -4,7 +4,7 @@ from app.models import User
 from config import TestConfig
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def test_client():
     test_app = create_app(TestConfig)
     testing_client = test_app.test_client()
@@ -16,7 +16,7 @@ def test_client():
 
     context.pop()
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def init_database():
     db.create_all()
 

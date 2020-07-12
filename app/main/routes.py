@@ -46,6 +46,7 @@ def buy():
             buy_price=share['price'],
             owner=current_user
         )
+        current_user.cash -= float(stock.buy_price) * stock.shares
         db.session.add(stock)
         db.session.commit()
         flash(f'You bought {stock.shares} {stock.symbol} shares at £ {stock.buy_price:0.2f} each')

@@ -1,5 +1,5 @@
-from app.models import Stock
-from .helpers.utils import log_in, log_out
+from app.models import Stock, User
+from .helpers.utils import log_in
 
 
 def test_buy_share(test_client, init_database, monkeypatch):
@@ -10,7 +10,7 @@ def test_buy_share(test_client, init_database, monkeypatch):
         return dict(price='200.00')
 
     monkeypatch.setattr(routes, 'get_quote', value)
-        
+
     response = test_client.post(
         '/buy',
         data=dict(symbol='AAPL', shares=2),
@@ -18,6 +18,7 @@ def test_buy_share(test_client, init_database, monkeypatch):
     )
 
     stock = Stock.query.get(1)
+    user = User.query.get(1)
 
     assert stock.symbol == 'AAPL'
     assert stock.shares == 2
@@ -25,5 +26,4 @@ def test_buy_share(test_client, init_database, monkeypatch):
     assert stock.user_id == 1
     print(response.data)
     assert b'You bought 2 AAPL shares at \xc2\xa3 200.00 each' in response.data
-
-    log_out(test_client)
+    assert user.cash == 9600
