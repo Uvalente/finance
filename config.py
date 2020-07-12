@@ -15,6 +15,7 @@ class Config(object):
 
     # IEX Cloud
     IEX_KEY = environ.get('IEX_KEY')
+    TEST_IEX_KEY = environ.get('TEST_IEX_KEY')
 
 
 class TestConfig(Config):
