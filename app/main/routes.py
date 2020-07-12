@@ -16,7 +16,19 @@ def hello():
 @main_bp.route('/index')
 @login_required
 def index():
-    return render_template('index.html', user=current_user)
+    stocks = []
+    total = current_user.cash
+    for stock in current_user.stocks:
+        item = get_quote(stock.symbol)
+        item['shares'] = stock.shares
+        val = item['shares'] * float(item['price'])
+        item['total'] = f"{val:0.2f}"
+        stocks.append(item)
+        total += val
+
+    total = f"{total:0.2f}"
+    cash = f"{current_user.cash:0.2f}"
+    return render_template('index.html', cash=cash, stocks=stocks, total=total)
 
 
 @main_bp.route('/quote', methods=['GET', 'POST'])
