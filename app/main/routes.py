@@ -53,16 +53,25 @@ def buy():
     form = BuyForm()
     if form.validate_on_submit():
         share = get_quote(form.symbol.data)
-        stock = Stock(
-            symbol=form.symbol.data,
-            shares=form.shares.data,
-            buy_price=share['price'],
-            owner=current_user
-        )
-        current_user.cash -= float(stock.buy_price) * stock.shares
-        db.session.add(stock)
+        print(share)
+        # IF USER HAS STOCK -> UPDATE
+        # ELSE CREATE
+        owned_stock = Stock.query.filter(Stock.symbol == form.symbol.data, Stock.owner == current_user).first()
+        if owned_stock:
+            owned_stock.shares += form.shares.data
+        else:
+            stock = Stock(
+                symbol=form.symbol.data,
+                shares=form.shares.data,
+                buy_price=share['price'],
+                owner=current_user
+            )
+            db.session.add(stock)
+        
+        current_user.cash -= float(share['price']) * form.shares.data
         db.session.commit()
-        flash(f'You bought {stock.shares} {stock.symbol} shares at £ {stock.buy_price:0.2f} each')
+
+        flash(f"You bought {form.shares.data} {share['symbol']} shares at £ {float(share['price']):0.2f} each")
         return redirect(url_for('main_bp.index'))
     flash('Something went wrong, please try again')
     return redirect(url_for('main_bp.quote'))
