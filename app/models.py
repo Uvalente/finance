@@ -6,7 +6,8 @@ from app import db, login
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), index=True, unique=True, nullable=False)
+    username = db.Column(db.String(80), index=True,
+                         unique=True, nullable=False)
     email = db.Column(db.String(120), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     cash = db.Column(db.Integer, default=10000)
@@ -34,6 +35,13 @@ class Stock(db.Model):
     shares = db.Column(db.Integer, nullable=False)
     buy_price = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    @classmethod
+    def is_owned(cls, symbol, user):
+        return Stock.query.filter(
+            Stock.symbol == symbol,
+            Stock.owner == user
+        ).first()
 
     def __repr__(self):
         return '<Stock {}>'.format(self.symbol)
