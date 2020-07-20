@@ -57,8 +57,12 @@ def buy():
         share = get_quote(query_symbol)
         buy_price = float(share['price'])
 
-        owned_stock = Stock.is_owned(query_symbol, current_user)
+        transaction_value = buy_price * query_quantity
+        if transaction_value > current_user.cash:
+            flash('Not enough cash to proceed with the purchase')
+            return redirect(url_for('main_bp.quote'))
 
+        owned_stock = Stock.is_owned(query_symbol, current_user)
         if owned_stock:
             owned_stock.shares += query_quantity
         else:
@@ -70,7 +74,7 @@ def buy():
             )
             db.session.add(stock)
 
-        current_user.cash -= buy_price * query_quantity
+        current_user.cash -= transaction_value
         db.session.commit()
 
         flash(
