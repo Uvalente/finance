@@ -14,3 +14,7 @@ class BuyForm(FlaskForm):
     shares = IntegerField('Shares', [DataRequired(), NumberRange(
         min=1)], widget=NumberInput(min=1))
     submit = SubmitField('Buy')
+
+
+class SellForm(BuyForm):
+    submit = SubmitField('Sell')
