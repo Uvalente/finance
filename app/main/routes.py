@@ -86,10 +86,12 @@ def buy():
     return redirect(url_for('main_bp.quote'))
 
 
-@main_bp.route('/sell', methods=['POST'])
+@main_bp.route('/sell', methods=['GET', 'POST'])
 @login_required
 def sell():
     form = SellForm()
+    choices = [(stock.symbol, stock.symbol) for stock in current_user.stocks]
+    form.symbol.choices = choices
     if form.validate_on_submit():
         query_symbol = form.symbol.data
         query_quantity = form.shares.data
@@ -101,8 +103,7 @@ def sell():
         owned_stock.shares -= form.shares.data
         return redirect(url_for('main_bp.index'))
 
-    flash('Something went wrong, please try again')
-    return redirect(url_for('main_bp.quote'))
+    return render_template('sell.html', form=form)
 
 
 def get_quote(symbol):
