@@ -1,8 +1,10 @@
-from flask import render_template, current_app, flash ,redirect, url_for
+from flask import render_template, current_app, flash, redirect, url_for
 from flask_login import login_required, current_user
 import requests
+from app import db
 from app.main import main_bp
-from .forms import QuoteForm
+from app.models import Stock
+from .forms import QuoteForm, BuyForm
 
 
 @main_bp.route("/hello")
@@ -14,21 +16,74 @@ def hello():
 @main_bp.route('/index')
 @login_required
 def index():
-    return render_template('index.html', user=current_user)
+    stocks = []
+    total = current_user.cash
+    for stock in current_user.stocks:
+        item = get_quote(stock.symbol)
+        item['shares'] = stock.shares
+        val = item['shares'] * float(item['price'])
+        item['price'] = f"{float(item['price']):0.2f}"
+        item['total'] = f"{val:0.2f}"
+        stocks.append(item)
+        total += val
+
+    total = f"{total:0.2f}"
+    cash = f"{current_user.cash:0.2f}"
+    return render_template('index.html', cash=cash, stocks=stocks, total=total)
 
 
 @main_bp.route('/quote', methods=['GET', 'POST'])
 @login_required
 def quote():
     quote_form = QuoteForm()
+    buy_form = BuyForm()
     if quote_form.validate_on_submit():
         share = get_quote(quote_form.symbol.data)
         if not share:
             flash('No stock found')
             return redirect(url_for('main_bp.quote'))
-        return render_template('quote.html', quote_form=quote_form, share=share)
+        return render_template('quote.html', quote_form=quote_form, share=share, buy_form=buy_form)
 
     return render_template('quote.html', quote_form=quote_form)
+
+
+@main_bp.route('/buy', methods=['POST'])
+@login_required
+def buy():
+    form = BuyForm()
+    if form.validate_on_submit():
+        query_symbol = form.symbol.data
+        query_quantity = form.shares.data
+        share = get_quote(query_symbol)
+        buy_price = float(share['price'])
+
+        transaction_value = buy_price * query_quantity
+        if transaction_value > current_user.cash:
+            flash('Not enough cash to proceed with the purchase')
+            return redirect(url_for('main_bp.quote'))
+
+        owned_stock = Stock.is_owned(query_symbol, current_user)
+        if owned_stock:
+            owned_stock.shares += query_quantity
+        else:
+            stock = Stock(
+                symbol=query_symbol,
+                shares=query_quantity,
+                buy_price=buy_price,
+                owner=current_user
+            )
+            db.session.add(stock)
+
+        current_user.cash -= transaction_value
+        db.session.commit()
+
+        flash(
+            f"You bought {query_quantity} {query_symbol} shares at £ {buy_price:0.2f} each"
+        )
+        return redirect(url_for('main_bp.index'))
+
+    flash('Something went wrong, please try again')
+    return redirect(url_for('main_bp.quote'))
 
 
 def get_quote(symbol):
