@@ -97,10 +97,15 @@ def sell():
         query_quantity = form.shares.data
 
         owned_stock = Stock.is_owned(query_symbol, current_user)
+        
+        if query_quantity > owned_stock.shares:
+            flash('You do not have enough shares to sell')
+            redirect(url_for('main_bp.sell'))
         flash(
             f"You sold {query_quantity} {query_symbol} shares"
         )
         owned_stock.shares -= form.shares.data
+        db.session.commit()
         return redirect(url_for('main_bp.index'))
 
     return render_template('sell.html', form=form)
