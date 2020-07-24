@@ -92,6 +92,7 @@ def sell():
     form = SellForm()
     choices = [(stock.symbol, stock.symbol) for stock in current_user.stocks]
     form.symbol.choices = choices
+
     if form.validate_on_submit():
         query_symbol = form.symbol.data
         query_quantity = form.shares.data
@@ -113,7 +114,14 @@ def sell():
             f"You sold {query_quantity} {query_symbol} shares at {sell_price:0.2f} each"
         )
         current_user.cash += query_quantity * sell_price
-        owned_stock.shares -= query_quantity
+
+        if query_quantity == owned_stock.shares:
+            stock = Stock.query.filter_by(
+                symbol=query_symbol, user_id=current_user.id).first()
+            db.session.delete(stock)
+        else:
+            owned_stock.shares -= query_quantity
+
         db.session.commit()
         return redirect(url_for('main_bp.index'))
 

@@ -41,3 +41,24 @@ def test_over_sell_error(test_client, init_database, monkeypatch):
     stock = Stock.query.get(1)
     assert stock.shares == 1
     assert b'You do not have enough shares to sell' in response.data
+
+
+def test_selling_all_shares(test_client, init_database, monkeypatch):
+    monkeypatch.setattr(routes, 'get_quote', value)
+
+    test_client.post(
+        '/sell',
+        data=dict(symbol='AAPL', shares=1)
+    )
+
+    def new_value(arg):
+        return dict(symbol='AAPL', price=555.55)
+
+    monkeypatch.setattr(routes, 'get_quote', new_value)
+
+    response = test_client.get('/')
+
+    stock = Stock.query.filter_by(symbol='AAPL').first()
+
+    assert not stock
+    assert b'555.55' not in response.data
