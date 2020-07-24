@@ -127,6 +127,14 @@ def sell():
 
         owned_stock.shares -= query_quantity
 
+        transaction = Transaction(
+            user_id=current_user.id,
+            stock_id=owned_stock.id,
+            sell_price=sell_price,
+            shares=query_quantity
+        )
+
+        db.session.add(transaction)
         db.session.commit()
         return redirect(url_for('main_bp.index'))
 

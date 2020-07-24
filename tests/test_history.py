@@ -36,7 +36,7 @@ def test_transaction_seed(test_client, init_database):
     init_database.session.commit()
 
     response = test_client.get('/history')
-    
+
     assert b'AMZN' in response.data
     assert b'44.44' in response.data
     assert b'2' in response.data
@@ -44,7 +44,7 @@ def test_transaction_seed(test_client, init_database):
     assert b'2020' in response.data
 
 
-def test_history(test_client, init_database, monkeypatch):
+def test_buy_history(test_client, init_database, monkeypatch):
     log_in(test_client)
 
     monkeypatch.setattr(routes, 'get_quote', aapl)
@@ -63,3 +63,32 @@ def test_history(test_client, init_database, monkeypatch):
     assert b'750.00' in response.data
     assert b'2' in response.data
     assert b'4' in response.data
+
+def test_sell_history(test_client, init_database, monkeypatch):
+    def sell_aapl(arg):
+        return dict(symbol='AAPL', price='310.00')
+
+    monkeypatch.setattr(routes, 'get_quote', sell_aapl)
+
+    test_client.post(
+        '/sell',
+        data=dict(symbol='AAPL', shares=1),
+        follow_redirects=True
+    )
+
+    def sell_aapl_two(arg):
+        return dict(symbol='AAPL', price='275.58')
+
+    monkeypatch.setattr(routes, 'get_quote', sell_aapl_two)
+
+    test_client.post(
+        '/sell',
+        data=dict(symbol='AAPL', shares=1),
+        follow_redirects=True
+    )
+
+    response = test_client.get('/history')
+
+    print(response.data)
+    assert b'310.00' in response.data
+    assert b'275.58' in response.data
