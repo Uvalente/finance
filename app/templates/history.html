@@ -15,7 +15,7 @@
         <th>{{ t.shares }}</th>
         <th>{{ '{0:0.2f}'.format(t.buy_price) if t.buy_price else '' }}</th>
         <th>{{ '{0:0.2f}'.format(t.sell_price) if t.sell_price else '' }}</th>
-        <th>{{ t.date_time }}</th>
+        <th>{{ t.date_time.strftime('%d/%m/%Y %H:%M:%S') }}</th>
     </tr>
     {% endfor %}
 </table>

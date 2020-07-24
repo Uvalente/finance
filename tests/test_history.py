@@ -1,3 +1,5 @@
+from freezegun import freeze_time
+from datetime import datetime
 from app.main import routes
 from app.models import Transaction, Stock
 from .helpers.utils import log_in, buy_share
@@ -5,9 +7,11 @@ from .helpers.utils import log_in, buy_share
 def aapl(arg):
     return dict(symbol='AAPL', price='300.00')
 
+
 def nvda(arg):
     return dict(symbol='NVDA', price='750.00')
 
+@freeze_time("2020-07-10 15:30:20")
 def test_transaction_seed(test_client, init_database):
     log_in(test_client)
 
@@ -21,7 +25,8 @@ def test_transaction_seed(test_client, init_database):
         user_id=1,
         stock_id=1,
         buy_price=44.44,
-        shares=2
+        shares=2,
+        date_time=datetime.now()
     )
     amzn_sell = Transaction(
         user_id=1,
@@ -36,12 +41,13 @@ def test_transaction_seed(test_client, init_database):
     init_database.session.commit()
 
     response = test_client.get('/history')
-
+    print(response.data)
     assert b'AMZN' in response.data
     assert b'44.44' in response.data
     assert b'2' in response.data
     assert b'70.00' in response.data
-    assert b'2020' in response.data
+    assert b'10/07/2020' in response.data
+    assert b'15:30:20' in response.data
 
 
 def test_buy_history(test_client, init_database, monkeypatch):
@@ -63,6 +69,7 @@ def test_buy_history(test_client, init_database, monkeypatch):
     assert b'750.00' in response.data
     assert b'2' in response.data
     assert b'4' in response.data
+
 
 def test_sell_history(test_client, init_database, monkeypatch):
     def sell_aapl(arg):
