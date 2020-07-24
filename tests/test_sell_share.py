@@ -3,11 +3,12 @@ from app.models import Stock
 from .helpers.utils import log_in, buy_share
 
 
+def value(arg):
+    return dict(symbol='AAPL', price='400.00')
+
+
 def test_sell_share(test_client, init_database, monkeypatch):
     log_in(test_client)
-
-    def value(arg):
-        return dict(symbol='AAPL', price='400.00')
 
     monkeypatch.setattr(routes, 'get_quote', value)
 
@@ -26,10 +27,7 @@ def test_sell_share(test_client, init_database, monkeypatch):
     assert b'800.00' not in response.data
 
 
-def test_sell_error(test_client, init_database, monkeypatch):
-    def value(arg):
-        return dict(symbol='AAPL', price='400.00')
-
+def test_over_sell_error(test_client, init_database, monkeypatch):
     monkeypatch.setattr(routes, 'get_quote', value)
 
     response = test_client.post(
@@ -38,4 +36,6 @@ def test_sell_error(test_client, init_database, monkeypatch):
         follow_redirects=True
     )
 
+    stock = Stock.query.get(1)
+    assert stock.shares == 1
     assert b'You do not have enough shares to sell' in response.data
