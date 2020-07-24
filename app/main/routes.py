@@ -128,6 +128,14 @@ def sell():
     return render_template('sell.html', form=form)
 
 
+@main_bp.route('/history', methods=['GET'])
+@login_required
+def history():
+    transactions = current_user.transactions
+    print('############', transactions)
+    return render_template('history.html', transactions=transactions)
+
+
 def get_quote(symbol):
     # MAY NEED TO PARSE SYMBOL WITH urllib.parse.quote_plus()
     try:
