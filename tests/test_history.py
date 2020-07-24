@@ -36,9 +36,30 @@ def test_transaction_seed(test_client, init_database):
     init_database.session.commit()
 
     response = test_client.get('/history')
-    print(response.data)
+    
     assert b'AMZN' in response.data
     assert b'44.44' in response.data
     assert b'2' in response.data
     assert b'70.00' in response.data
     assert b'2020' in response.data
+
+
+def test_history(test_client, init_database, monkeypatch):
+    log_in(test_client)
+
+    monkeypatch.setattr(routes, 'get_quote', aapl)
+
+    buy_share(test_client, 'AAPL', 2)
+
+    monkeypatch.setattr(routes, 'get_quote', nvda)
+
+    buy_share(test_client, 'NVDA', 4)
+
+    response = test_client.get('/history')
+
+    assert b'AAPL' in response.data
+    assert b'NVDA' in response.data
+    assert b'300.00' in response.data
+    assert b'750.00' in response.data
+    assert b'2' in response.data
+    assert b'4' in response.data

@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 import requests
 from app import db
 from app.main import main_bp
-from app.models import Stock
+from app.models import Stock, Transaction
 from .forms import QuoteForm, BuyForm, SellForm
 
 
@@ -77,6 +77,16 @@ def buy():
         current_user.cash -= transaction_value
         db.session.commit()
 
+        transaction = Transaction(
+            user_id=current_user.id,
+            stock_id=Stock.is_owned(query_symbol, current_user).id,
+            buy_price=buy_price,
+            shares=query_quantity
+        )
+
+        db.session.add(transaction)
+        db.session.commit()
+
         flash(
             f"You bought {query_quantity} {query_symbol} shares at £ {buy_price:0.2f} each"
         )
@@ -115,12 +125,7 @@ def sell():
         )
         current_user.cash += query_quantity * sell_price
 
-        if query_quantity == owned_stock.shares:
-            stock = Stock.query.filter_by(
-                symbol=query_symbol, user_id=current_user.id).first()
-            db.session.delete(stock)
-        else:
-            owned_stock.shares -= query_quantity
+        owned_stock.shares -= query_quantity
 
         db.session.commit()
         return redirect(url_for('main_bp.index'))
@@ -132,7 +137,6 @@ def sell():
 @login_required
 def history():
     transactions = current_user.transactions
-    print('############', transactions)
     return render_template('history.html', transactions=transactions)
 
 
