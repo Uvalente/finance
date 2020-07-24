@@ -57,7 +57,7 @@ class Transaction(db.Model):
     stock_id = db.Column(db.Integer, db.ForeignKey('stocks.id'), nullable=False)
     buy_price = db.Column(db.Float)
     sell_price = db.Column(db.Float)
-    date_time = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    date_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
     shares = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):

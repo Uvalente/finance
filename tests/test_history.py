@@ -41,7 +41,7 @@ def test_transaction_seed(test_client, init_database):
     init_database.session.commit()
 
     response = test_client.get('/history')
-    print(response.data)
+
     assert b'AMZN' in response.data
     assert b'44.44' in response.data
     assert b'2' in response.data
