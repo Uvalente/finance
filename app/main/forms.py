@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField
+from wtforms import StringField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, NumberRange
 from wtforms.widgets.html5 import NumberInput
 
@@ -14,3 +14,10 @@ class BuyForm(FlaskForm):
     shares = IntegerField('Shares', [DataRequired(), NumberRange(
         min=1)], widget=NumberInput(min=1))
     submit = SubmitField('Buy')
+
+
+class SellForm(FlaskForm):
+    symbol = SelectField('Symbol')
+    shares = IntegerField('Shares', [DataRequired(), NumberRange(
+        min=1)], widget=NumberInput(min=1))
+    submit = SubmitField('Sell')
