@@ -51,8 +51,6 @@ def test_transaction_seed(test_client, init_database):
 
 
 def test_buy_history(test_client, init_database, monkeypatch):
-    log_in(test_client)
-
     monkeypatch.setattr(routes, 'get_quote', aapl)
 
     buy_share(test_client, 'AAPL', 2)
