@@ -106,10 +106,14 @@ def sell():
             flash('You do not have enough shares to sell')
             return redirect(url_for('main_bp.sell'))
 
+        share = get_quote(query_symbol)
+        sell_price = float(share['price'])
+
         flash(
-            f"You sold {query_quantity} {query_symbol} shares"
+            f"You sold {query_quantity} {query_symbol} shares at {sell_price:0.2f} each"
         )
-        owned_stock.shares -= form.shares.data
+        current_user.cash += query_quantity * sell_price
+        owned_stock.shares -= query_quantity
         db.session.commit()
         return redirect(url_for('main_bp.index'))
 

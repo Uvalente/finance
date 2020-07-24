@@ -25,6 +25,8 @@ def test_sell_share(test_client, init_database, monkeypatch):
     stock = Stock.query.get(1)
     assert stock.shares == 1
     assert b'800.00' not in response.data
+    assert b'10000.00' in response.data
+    assert b'You sold 1 AAPL shares at \xc2\xa3 400.00 each'
 
 
 def test_over_sell_error(test_client, init_database, monkeypatch):
