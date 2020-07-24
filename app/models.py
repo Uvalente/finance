@@ -1,4 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 from flask_login import UserMixin
 from app import db, login
 
@@ -12,6 +13,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     cash = db.Column(db.Integer, default=10000)
     stocks = db.relationship('Stock', backref='owner', lazy=True)
+    transactions = db.relationship('Transaction', backref='author', lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -35,6 +37,7 @@ class Stock(db.Model):
     shares = db.Column(db.Integer, nullable=False)
     buy_price = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    transactions = db.relationship('Transaction', backref='stock', lazy=True)
 
     @classmethod
     def is_owned(cls, symbol, user):
@@ -45,3 +48,17 @@ class Stock(db.Model):
 
     def __repr__(self):
         return '<Stock {}>'.format(self.symbol)
+
+
+class Transaction(db.Model):
+    __tablename__ = 'transactions'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True, nullable=False)
+    stock_id = db.Column(db.Integer, db.ForeignKey('stocks.id'), nullable=False)
+    buy_price = db.Column(db.Float)
+    sell_price = db.Column(db.Float)
+    date_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    shares = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return '<Transaction {}>'.format(self.date_time)

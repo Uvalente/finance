@@ -60,5 +60,5 @@ def test_selling_all_shares(test_client, init_database, monkeypatch):
 
     stock = Stock.query.filter_by(symbol='AAPL').first()
 
-    assert not stock
+    assert stock.shares == 0
     assert b'555.55' not in response.data
