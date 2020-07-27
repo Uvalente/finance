@@ -1,13 +1,14 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<table>
+<h1 class="mb-4">Stocks Portfolio</h1>
+<table class='table table-hover'>
   <tr>
-    <th>Symbol</th>
-    <th>Name</th>
-    <th>Shares</th>
-    <th>Price</th>
-    <th>Total</th>
+    <th scope="col">Symbol</th>
+    <th scope="col">Name</th>
+    <th scope="col">Shares</th>
+    <th scope="col">Price</th>
+    <th scope="col">Total</th>
   </tr>
   {% for stock in stocks %}
     {% if stock.shares > 0 %}

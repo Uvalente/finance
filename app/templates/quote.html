@@ -1,28 +1,31 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<h1 class="mb-4">Look for a quote</h1>
 <form action='' method='POST'>
     {{ quote_form.hidden_tag() }}
-    <div>
-        {{ quote_form.symbol.label }}{{ quote_form.symbol }}
+    <div class="form-group">
+        {{ quote_form.symbol.label }}
+        {{ quote_form.symbol(class_='form-control col-4 col-md-2') }}
     </div>
-    <div>
-        {{ quote_form.submit }}
+    <div class="mt-4">
+        {{ quote_form.submit(class_='btn btn-primary') }}
     </div>
 </form>
 {% if share %}
-<div>
+<div class="my-5 lead">
     A share of {{ share.name }} cost £ {{ share.price }}
-    symbol: {{ share.symbol }}
+    <p class="text-danger">The price may change while processing the transaction</p>
 </div>
 <form action="/buy" method="POST">
     {{ buy_form.hidden_tag() }}
     {{ buy_form.symbol(value=share.symbol, hidden=True) }}
-    <div>
-        {{ buy_form.shares.label }}{{ buy_form.shares }}
+    <div class="form-group">
+        {{ buy_form.shares.label }}
+        {{ buy_form.shares(class_='form-control col-4 col-md-2') }}
     </div>
-    <div>
-        {{ buy_form.submit }}
+    <div class="mt-4">
+        {{ buy_form.submit(class_='btn btn-primary') }}
     </div>
 </form>
 {% endif %}

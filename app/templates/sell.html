@@ -1,16 +1,22 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<h1 class="mb-4">Sell your shares</h1>
 <form action="" method="POST">
     {{ form.hidden_tag() }}
-    <div>
-        {{ form.symbol.label }}{{ form.symbol }}
+    <div class="form-group">
+        {{ form.symbol.label }}
+        {{ form.symbol(class_='form-control col-4 col-md-2') }}
     </div>
-    <div>
-        {{ form.shares.label }}{{ form.shares }}
+    <div class="form-group mt-4">
+        {{ form.shares.label }}
+        {{ form.shares(class_='form-control col-4 col-md-2') }}
     </div>
-    <div>
-        {{ form.submit }}
+    <div class="my-5 lead text-danger">
+        The price may change while processing the transaction
+    </div>
+    <div class="mt-4">
+        {{ form.submit(class_='btn btn-primary') }}
     </div>
 </form>
 {% endblock content %}
