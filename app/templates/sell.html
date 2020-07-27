@@ -3,14 +3,16 @@
 {% block content %}
 <form action="" method="POST">
     {{ form.hidden_tag() }}
-    <div>
-        {{ form.symbol.label }}{{ form.symbol }}
+    <div class="form-group">
+        {{ form.symbol.label }}
+        {{ form.symbol(class_='form-control col-4 col-md-2') }}
     </div>
-    <div>
-        {{ form.shares.label }}{{ form.shares }}
+    <div class="form-group mt-4">
+        {{ form.shares.label }}
+        {{ form.shares(class_='form-control col-4 col-md-2') }}
     </div>
-    <div>
-        {{ form.submit }}
+    <div class="mt-4">
+        {{ form.submit(class_='btn btn-primary') }}
     </div>
 </form>
 {% endblock content %}
