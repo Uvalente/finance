@@ -13,9 +13,9 @@
     </div>
 </form>
 {% if share %}
-<div class=" my-5 lead">
+<div class="my-5 lead">
     A share of {{ share.name }} cost £ {{ share.price }}
-    symbol: {{ share.symbol }}
+    <p class="text-danger">The price may change while processing the transaction</p>
 </div>
 <form action="/buy" method="POST">
     {{ buy_form.hidden_tag() }}
