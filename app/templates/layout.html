@@ -47,11 +47,11 @@
   </nav>
   {% with messages = get_flashed_messages() %}
   {% if messages %}
-  <ul>
+  <div class="aler alert-info text-center">
     {% for message in messages %}
-    <li>{{ message }}</li>
+    <p class="py-2">{{ message }}</p>
     {% endfor %}
-  </ul>
+  </div>
   {% endif %}
   {% endwith %}
   <div class="container">
