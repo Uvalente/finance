@@ -151,11 +151,9 @@ def history():
 def get_quote(symbol):
     # MAY NEED TO PARSE SYMBOL WITH urllib.parse.quote_plus()
     try:
-        # USING TESTING API KEY
-        api_key = current_app.config['TEST_IEX_KEY']
-        # USING SANDBOX API
+        api_key = current_app.config['IEX_KEY']
         response = requests.get(
-            f'https://sandbox.iexapis.com/stable/stock/{symbol}/quote?token={api_key}')
+            f'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={api_key}')
         response.raise_for_status()
     except requests.RequestException:
         return None
