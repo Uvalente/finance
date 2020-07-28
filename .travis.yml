@@ -1,7 +1,15 @@
 language: python
 python:
-  - '3.6'
+- '3.6'
 install:
-  - pip install -r requirements.txt
+- pip install -r requirements.txt
 script:
-  - pytest
+- pytest
+deploy:
+  provider: heroku
+  app: stock-mocks
+  api_key:
+    secure: 0XSWWIlkC1kAwDWiEprFmQLunBwUjJnJs6A7E1CCN6Pcr++6Om98R3QgsUxlJBU+J/K8DFjuFUnbaIItemGg6jRDcoiCXDkNWMoEqbie344JDRWFzI9OLPkdF8LrepT/JZHz97WtTZfAmtnFh2V5ealapwyp8HyG8ok520c4++Oe+jY+M1UexVhSOxsC6bhggoYhfWLbx164+mzYwL7Jg6+uoWyFzp9RJIbFMyKaOerhufmNvap93JqS1xCUVSZFsFzIQGCYoCBc9YUh9qAPCcHzqNobIJ+w4DbEvNGhLlVpi+YTINqfPRxQ80nRk2T9lfin5CDVVaYfHWrhUKJU5xPEJVdVKtmNTQ3QBNM5fB+AaXCQyj6K7H0LzaCA1ZAEQ28gXONbh300Of8m+TmNjDYbKGxHAv6Gb0GfaCSy0IhmehLaUhAikuwvgxWxiink46PJBCoO8WAlxrJBsEFuvKTJSNseTn7Xd9y9rE605d5JUKXVQ9f4LsxuDizM5FoOqWttHt/WgOXCyZs6QNJXXk4PjoAotzl5mZhxuOyV9/+y4ylMwthO+9drNaqlMWOeW9TjEmiVOPkzf+jDo0pkImQYJ0VE3G42xpUZ8j79SZc2YrlnrIQOoJzXJw/cvdz3NtWqX1vw3+Xgq2QvQcn9lvycpNt46ZF/QeWHvFFIMig=
+  run: 
+    - flask db upgrade
+    - gunicorn wsgi:app
