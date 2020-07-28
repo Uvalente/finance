@@ -7,7 +7,7 @@ COPY requirements.txt .
 RUN python -m venv env
 
 RUN env/bin/pip install -r requirements.txt
-RUN env/bin/pip install gunicorn
+RUN env/bin/pip install gunicorn pymysql
 
 COPY config.py wsgi.py boot.sh ./
 RUN chmod +x boot.sh
